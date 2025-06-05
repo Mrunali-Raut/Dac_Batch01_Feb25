@@ -109,7 +109,7 @@ public class JDBCDemo {
 	        System.out.println("Enter new Password:");
 	        String newPassword = sc.nextLine();
 	        
-	        String query = "UPDATE Users SET Password = ? WHERE User Name = ?";
+	        String query = "UPDATE Users SET Password = ? WHERE User = ?";
 	        PreparedStatement preStmt = con.prepareStatement(query);
 	        preStmt.setString(1, newPassword);
 	        preStmt.setString(2, username);
@@ -141,7 +141,7 @@ public class JDBCDemo {
 	        ResultSet rs = preStmt.executeQuery();
 	        
 	        if (rs.next()) {
-	            String username = rs.getString("User  Name");
+	            String username = rs.getString("User");
 	            String email = rs.getString("Email");
 	            String city = rs.getString("City");
 	            System.out.println("Username: " + username + ", Email: " + email + ", City: " + city);
