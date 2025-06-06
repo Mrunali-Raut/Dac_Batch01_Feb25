@@ -14,32 +14,43 @@ import java.util.Scanner;
 
 public class JDBCDemo {
 
+	static final String url ="jdbc:mysql://localhost:3306/wbja_b1";
+	static final String userName="root";
+	static final String password="cdac";
+	static Scanner sc = new Scanner(System.in);
+	
 	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
 		
-        final String url ="jdbc:mysql://localhost:3306/wbja_b1";
-        final String userName="root";
-        final String password="cdac";
 
         while(true) {
         	System.out.println(" 1. Register a User\n 2. List All Users based on City\n 3. Update Password of a User\n 4. Display user information based on User Name\n 5.Exit\n Enter choice:");
         	int choice=sc.nextInt();
         	switch(choice) {
         	case 1: {
-        		registerUser(url,userName,password,sc);
+        		registerUser();
         		break;
         	}
-        	case 2: listUsersByCity(url,userName,password,sc);
-        	case 3: updatePassword(url,userName,password,sc);
-        	case 4: displayUserByName(url,userName,password,sc);
+        	case 2: {
+        		listUsersByCity();
+        		break;
+        	}
+        	case 3: {
+        		updatePassword();
+        		break;
+        	}
+        	case 4: {
+        		displayUserByName();
+        		break;
+        	}
         	case 5:System.exit(0);
+        	
         	default:System.out.println("Invalid Input...");
         	}
         }
 
 	}
 
-	private static void registerUser(String url, String userName, String password,Scanner sc) {
+	private static void registerUser() {
 		try(Connection con=DriverManager.getConnection(url,userName,password)){
 			sc.nextLine();
 			System.out.println("Enter Username:");
@@ -62,11 +73,8 @@ public class JDBCDemo {
 			preStmt.setString(5, city);
 			
 			int rs= preStmt.executeUpdate();
-			if (rs>0) {
-				System.out.println("Success");
-			}else {
-				System.out.println("Fail");
-			}
+		
+			System.out.println((rs>0) ? "Query Success" : "Query Fail");
 			preStmt.close();
 			
 		} catch (SQLException e) {
@@ -74,7 +82,7 @@ public class JDBCDemo {
 		}
 		
 	}
-	private static void listUsersByCity(String url, String userName, String password, Scanner sc) {
+	private static void listUsersByCity() {
 	    try (Connection con = DriverManager.getConnection(url, userName, password)) {
 	    	sc.nextLine();
 	        System.out.println("Enter City to list users:");
@@ -101,7 +109,7 @@ public class JDBCDemo {
 	    }
 	}
 
-	private static void updatePassword(String url, String userName, String password, Scanner sc) {
+	private static void updatePassword() {
 	    try (Connection con = DriverManager.getConnection(url, userName, password)) {
 	    	sc.nextLine();
 	        System.out.println("Enter Username to update password:");
@@ -109,7 +117,7 @@ public class JDBCDemo {
 	        System.out.println("Enter new Password:");
 	        String newPassword = sc.nextLine();
 	        
-	        String query = "UPDATE Users SET Password = ? WHERE User Name = ?";
+	        String query = "UPDATE Users SET Password = ? WHERE User = ?";
 	        PreparedStatement preStmt = con.prepareStatement(query);
 	        preStmt.setString(1, newPassword);
 	        preStmt.setString(2, username);
@@ -128,20 +136,20 @@ public class JDBCDemo {
 	    }
 	}
 
-	private static void displayUserByName(String url, String userName, String password, Scanner sc) {
+	private static void displayUserByName() {
 	    try (Connection con = DriverManager.getConnection(url, userName, password)) {
 	    	sc.nextLine();
 	        System.out.println("Enter Name to display user:");
 	        String name = sc.nextLine();
 	        
-	        String query = "SELECT * FROM Users WHERE Name = ?";
+	        String query = "SELECT * FROM Users WHERE name = ?";
 	        PreparedStatement preStmt = con.prepareStatement(query);
 	        preStmt.setString(1, name);
 	        
 	        ResultSet rs = preStmt.executeQuery();
 	        
 	        if (rs.next()) {
-	            String username = rs.getString("User  Name");
+	            String username = rs.getString("User");
 	            String email = rs.getString("Email");
 	            String city = rs.getString("City");
 	            System.out.println("Username: " + username + ", Email: " + email + ", City: " + city);
